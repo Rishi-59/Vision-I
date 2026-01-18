@@ -28,25 +28,24 @@ Vision I aims to address this problem by using artificial intelligence to interp
 
 ## System Overview
 
-Vision I follows a layered architecture:
+- Vision I follows a layered architecture:
+- 
+- Camera
+- ↓
+- Video Frame Capture
+- ↓
+- Object Detection (Pretrained Model)
+- ↓
+- Feature Extraction
+- (Distance, Direction, Motion)
+- ↓
+- Decision Engine (Rule-Based AI)
+- ↓
+- Voice Guidance
+- ↓
+- User
 
-Camera
-↓
-Video Frame Capture
-↓
-Object Detection (Pretrained Model)
-↓
-Feature Extraction
-(Distance, Direction, Motion)
-↓
-Decision Engine (Rule-Based AI)
-↓
-Voice Guidance
-↓
-User
-
-
-Each module is designed independently to ensure clarity, scalability, and ease of maintenance.
+- Each module is designed independently to ensure clarity, scalability, and ease of maintenance.
 
 ---
 
@@ -78,37 +77,37 @@ Each module is designed independently to ensure clarity, scalability, and ease o
 
 ## Repository Structure
 
-vision-i/
-│
-├── README.md
-├── requirements.txt
-├── .gitignore
-│
-├── docs/
-│ ├── problem_definition.md
-│ ├── block_diagram.png
-│ ├── algorithm.md
-│
-├── src/
-│ ├── main.py
-│ ├── config.py
-│
-│ ├── vision/
-│ │ ├── camera.py
-│ │ ├── detector.py
-│
-│ ├── features/
-│ │ ├── distance.py
-│ │ ├── direction.py
-│ │ ├── motion.py
-│
-│ ├── decision/
-│ │ └── rules.py
-│
-│ └── audio/
-│ └── tts.py
-│
-└── tests/
+- vision-i/
+- │
+- ├── README.md
+- ├── requirements.txt
+- ├── .gitignore
+- │
+- ├── docs/
+- │ ├── problem_definition.md
+- │ ├── block_diagram.png
+- │ ├── algorithm.md
+- │
+- ├── src/
+- │ ├── main.py
+- │ ├── config.py
+- │
+- │ ├── vision/
+- │ │ ├── camera.py
+- │ │ ├── detector.py
+- │
+- │ ├── features/
+- │ │ ├── distance.py
+- │ │ ├── direction.py
+- │ │ ├── motion.py
+- │
+- │ ├── decision/
+- │ │ └── rules.py
+- │
+- │ └── audio/
+- │   └── tts.py
+- │
+- └── tests/
 
 ---
 
