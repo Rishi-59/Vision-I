@@ -77,38 +77,47 @@ Each module is designed independently to ensure clarity, scalability, and ease o
 ---
 
 ## Repository Structure
-```
+
+```text
 vision-i/
 │
 ├── README.md
 ├── requirements.txt
 ├── .gitignore
+├── activate_venv.ps1
+│
+├── .venv/                 # Python virtual environment (ignored)
 │
 ├── docs/
-│ ├── problem_definition.md
-│ ├── block_diagram.png
-│ ├── algorithm.md
+│   ├── problem_definition.md
+│   ├── block_diagram.png
+│   └── algorithm.md
 │
 ├── src/
-│ ├── main.py
-│ ├── config.py
+│   ├── __init__.py
+│   ├── main.py            # Application entry point
 │
-│ ├── vision/
-│ │ ├── camera.py
-│ │ ├── detector.py
+│   ├── vision/            # Visual perception layer
+│   │   ├── __init__.py
+│   │   ├── camera.py
+│   │   └── detector.py
 │
-│ ├── features/
-│ │ ├── distance.py
-│ │ ├── direction.py
-│ │ ├── motion.py
+│   ├── features/          # Feature extraction modules
+│   │   ├── __init__.py
+│   │   ├── distance.py
+│   │   ├── direction.py
+│   │   └── motion.py
 │
-│ ├── decision/
-│ │ └── rules.py
+│   ├── decision/          # Decision-making (AI logic)
+│   │   ├── __init__.py
+│   │   └── rules.py
 │
-│ └── audio/
-│   └── tts.py
+│   └── audio/             # Voice output module
+│       ├── __init__.py
+│       └── tts.py
 │
-└── tests/
+└── tests/                 # Unit and integration tests
+
 ```
 ---
 
