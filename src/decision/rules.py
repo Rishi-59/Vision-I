@@ -5,9 +5,9 @@ Combines feature extraction results (distance, direction, motion)
 and applies rule-based logic to generate navigation guidance.
 """
 
-from features.distance import DistanceEstimator
-from features.direction import DirectionEstimator
-from features.motion import MotionEstimator
+from src.features.distance import DistanceEstimator
+from src.features.direction import DirectionEstimator
+from src.features.motion import MotionEstimator
 
 
 class DecisionEngine:

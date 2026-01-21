@@ -5,10 +5,10 @@ This file serves as the central controller of the system.
 It initializes all modules and manages the execution flow.
 """
 
-from vision.camera import Camera
-from vision.detector import ObjectDetector
-from decision.rules import DecisionEngine
-from audio.tts import VoiceAssistant
+from src.vision.camera import Camera
+from src.vision.detector import ObjectDetector
+from src.decision.rules import DecisionEngine
+from src.audio.tts import VoiceAssistant
 
 
 def main():
