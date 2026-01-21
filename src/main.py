@@ -19,7 +19,7 @@ def main():
     # Initialize system components
     camera = Camera()
     detector = ObjectDetector()
-    decision_engine = DecisionEngine()
+    decision_engine = DecisionEngine(frame_width=640)
     voice = VoiceAssistant()
 
     print("[INFO] Vision I system started.")
