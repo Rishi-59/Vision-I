@@ -9,3 +9,6 @@ __pycache__/
 
 # Model files
 *.pt
+
+# Logs
+logs/
