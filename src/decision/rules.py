@@ -7,6 +7,7 @@ and applies rule-based logic to generate navigation guidance.
 
 import time
 
+from src.learning.adaptive_rules import AdaptiveThresholds
 from src.features.distance import DistanceEstimator
 from src.features.direction import DirectionEstimator
 from src.features.motion import MotionEstimator
@@ -31,6 +32,9 @@ class DecisionEngine:
         self.last_spoken_time = 0
 
         self.logger = DecisionLogger()
+        # Phase 3: Adaptive thresholds
+        self.adaptive = AdaptiveThresholds()
+
 
 
     def evaluate(self, detections):
@@ -66,23 +70,40 @@ class DecisionEngine:
                 break  # Nothing beats this
 
             # HIGH: Close obstacle in center
-            if distance is not None and distance < 1.5 and direction == "CENTER":
+            if (
+                distance is not None
+                and distance < self.adaptive.get_center_threshold()
+                and direction == "CENTER"
+            ):
+
                 if HIGH > best_priority:
                     best_decision = "Obstacle ahead. Please stop."
                     best_priority = HIGH
 
             # LOW: Side obstacles
-            if direction == "LEFT" and distance is not None and distance < 2.0:
+            if (
+                direction == "LEFT"
+                and distance is not None
+                and distance < self.adaptive.get_side_threshold()
+            ):
+
                 if LOW > best_priority:
                     best_decision = "Obstacle on left. Move right."
                     best_priority = LOW
 
-            elif direction == "RIGHT" and distance is not None and distance < 2.0:
+            elif (
+                direction == "RIGHT"
+                and distance is not None
+                and distance < self.adaptive.get_side_threshold()
+            ):
                 if LOW > best_priority:
                     best_decision = "Obstacle on right. Move left."
                     best_priority = LOW
 
         if best_decision:
+            # Update adaptive thresholds
+            self.adaptive.update(best_decision)
+
             # Log the decision event
             self.logger.log(
                 label=label,
