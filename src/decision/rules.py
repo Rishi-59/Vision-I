@@ -10,6 +10,7 @@ import time
 from src.features.distance import DistanceEstimator
 from src.features.direction import DirectionEstimator
 from src.features.motion import MotionEstimator
+from src.utils.logger import DecisionLogger
 
 CRITICAL = 3
 HIGH = 2
@@ -28,6 +29,8 @@ class DecisionEngine:
 
         self.cooldown_seconds = cooldown_seconds
         self.last_spoken_time = 0
+
+        self.logger = DecisionLogger()
 
 
     def evaluate(self, detections):
@@ -80,6 +83,14 @@ class DecisionEngine:
                     best_priority = LOW
 
         if best_decision:
+            # Log the decision event
+            self.logger.log(
+                label=label,
+                distance=distance,
+                direction=direction,
+                motion=motion,
+                decision=best_decision
+            )
             # Allow critical alerts to bypass cooldown
             if best_priority == CRITICAL:
                 self.last_spoken_time = time.time()
