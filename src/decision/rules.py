@@ -12,6 +12,8 @@ from src.features.distance import DistanceEstimator
 from src.features.direction import DirectionEstimator
 from src.features.motion import MotionEstimator
 from src.utils.logger import DecisionLogger
+from src.utils.metrics import MetricsCollector
+
 
 CRITICAL = 3
 HIGH = 2
@@ -34,8 +36,7 @@ class DecisionEngine:
         self.logger = DecisionLogger()
         # Phase 3: Adaptive thresholds
         self.adaptive = AdaptiveThresholds()
-
-
+        self.metrics = MetricsCollector()
 
     def evaluate(self, detections):
         """
@@ -44,6 +45,13 @@ class DecisionEngine:
         :param detections: List of detected objects
         :return: Decision message (str) or None
         """
+
+        if len(self.metrics.alert_times) % 10 == 0:
+            print(
+                f"[METRICS] Alerts/min: {self.metrics.alerts_per_minute():.2f}, "
+                f"Avg response: {self.metrics.average_response_time():.2f}s, "
+                f"Most common: {self.metrics.most_common_object()}"
+            )
 
         if not detections:
             return None
@@ -103,7 +111,8 @@ class DecisionEngine:
         if best_decision:
             # Update adaptive thresholds
             self.adaptive.update(best_decision)
-
+            # Update metrics
+            self.metrics.record(label)
             # Log the decision event
             self.logger.log(
                 label=label,
