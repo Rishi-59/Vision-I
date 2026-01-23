@@ -12,5 +12,5 @@ thresholds:
   max_distance: 3.0
 
 modes:
-  mode: debug   # voice | silent | debug
+  mode: voice   # voice | silent | debug
 
