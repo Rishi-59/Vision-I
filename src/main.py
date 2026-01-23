@@ -54,7 +54,7 @@ def main():
 
         # SHOW frame (required for key events)
         cv2.imshow("Vision I - Live Feed", frame)
-        
+
         if cv2.waitKey(1) & 0xFF == ord('q'):
             print("[INFO] Exit key pressed. Shutting down...")
             break
@@ -73,6 +73,7 @@ def main():
                 print(f"[DEBUG] Decision: {decision}")
                 print(f"[DEBUG] Detections: {detections}")
 
+    decision_engine.final_report()
 
     camera.release()
     cv2.destroyAllWindows()

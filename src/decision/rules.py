@@ -38,6 +38,23 @@ class DecisionEngine:
         self.adaptive = AdaptiveThresholds()
         self.metrics = MetricsCollector()
 
+    def final_report(self):
+        """
+        Print final evaluation metrics.
+        """
+        print("\n========== FINAL SYSTEM REPORT ==========")
+        print(f"Total alerts           : {len(self.metrics.alert_times)}")
+        print(f"Alerts/min (last 60s)  : {self.metrics.alerts_per_minute():.2f}")
+        print(f"Avg response time (s)  : {self.metrics.average_response_time():.2f}")
+
+        most_common = self.metrics.most_common_object()
+        if most_common:
+            print(f"Most common object     : {most_common[0]} ({most_common[1]} alerts)")
+        else:
+            print("Most common object     : None")
+
+        print("========================================\n")
+
     def evaluate(self, detections):
         """
         Evaluate detected objects and return a prioritized navigation decision.
@@ -46,12 +63,15 @@ class DecisionEngine:
         :return: Decision message (str) or None
         """
 
-        if len(self.metrics.alert_times) % 10 == 0:
-            print(
-                f"[METRICS] Alerts/min: {self.metrics.alerts_per_minute():.2f}, "
-                f"Avg response: {self.metrics.average_response_time():.2f}s, "
-                f"Most common: {self.metrics.most_common_object()}"
-            )
+        # Update and print metrics every 10 alerts
+        # if len(self.metrics.alert_times) % 10 == 0:
+        #     print(
+        #         f"[METRICS] "
+        #         f"Alerts/min (last 60s): {self.metrics.alerts_per_minute():.2f}, "
+        #         f"Avg response: {self.metrics.average_response_time():.2f}s, "
+        #         f"Most common: {self.metrics.most_common_object()}"
+        #     )
+
 
         if not detections:
             return None
@@ -132,4 +152,3 @@ class DecisionEngine:
                 return best_decision
 
         return None
-
