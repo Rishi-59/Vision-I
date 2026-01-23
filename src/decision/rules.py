@@ -18,6 +18,7 @@ from src.utils.metrics import MetricsCollector
 from src.context.scene_context import SceneContext
 from src.safety.alert_manager import AlertManager
 from src.memory.short_term_memory import ShortTermMemory
+from src.profiles.user_profile import UserProfile
 
 
 class DecisionEngine:
@@ -44,6 +45,8 @@ class DecisionEngine:
         self.context = SceneContext()
         self.alert_manager = AlertManager()
         self.memory = ShortTermMemory()
+        self.user_profile = UserProfile()
+        self.cooldown_seconds = self.user_profile.cooldown()
 
     # --------------------------------------------------
 
@@ -87,6 +90,10 @@ class DecisionEngine:
             side_threshold += 0.5
         elif context == "OUTDOOR":
             center_threshold -= 0.3
+
+        # User profile personalization
+        center_threshold += self.user_profile.center_offset()
+        side_threshold += self.user_profile.side_offset()
 
         # Safety clamp
         center_threshold = max(center_threshold, 0.5)
@@ -203,6 +210,10 @@ class DecisionEngine:
             # Repeat faster for high severity
             if self.alert_manager.should_repeat(severity):
                 self.last_spoken_time = time.time() - self.cooldown_seconds
+
+            if self.user_profile.verbosity() == "low" and severity != 4:
+                best_decision = best_decision.split(".")[0]
+
 
             # Bypass cooldown for critical alerts
             if self.alert_manager.should_bypass_cooldown(severity):
