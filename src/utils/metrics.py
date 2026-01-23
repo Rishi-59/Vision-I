@@ -1,15 +1,17 @@
 """
-Runtime metrics collection for Vision I.
+Runtime metrics collection for Vision I (polished).
 """
 
 import time
-from collections import Counter
+from collections import Counter, deque
 
 
 class MetricsCollector:
-    def __init__(self):
+    def __init__(self, window_seconds=60):
         self.start_time = time.time()
-        self.alert_times = []
+        self.window_seconds = window_seconds
+
+        self.alert_times = deque()
         self.object_counter = Counter()
 
     def record(self, label):
@@ -22,15 +24,24 @@ class MetricsCollector:
         if label:
             self.object_counter[label] += 1
 
+        self._trim_old_events()
+
+    def _trim_old_events(self):
+        """
+        Remove events outside the rolling window.
+        """
+        cutoff = time.time() - self.window_seconds
+        while self.alert_times and self.alert_times[0] < cutoff:
+            self.alert_times.popleft()
+
     def alerts_per_minute(self):
-        elapsed = time.time() - self.start_time
-        if elapsed == 0:
-            return 0
-        return len(self.alert_times) / (elapsed / 60)
+        if not self.alert_times:
+            return 0.0
+        return len(self.alert_times) * (60 / self.window_seconds)
 
     def average_response_time(self):
         if len(self.alert_times) < 2:
-            return 0
+            return 0.0
 
         intervals = [
             self.alert_times[i] - self.alert_times[i - 1]

@@ -1,0 +1,16 @@
+system:
+  frame_width: 640
+  cooldown_seconds: 3.0
+
+detection:
+  confidence_threshold: 0.5
+
+thresholds:
+  center_distance: 1.5
+  side_distance: 2.0
+  min_distance: 1.0
+  max_distance: 3.0
+
+modes:
+  mode: voice   # voice | silent | debug
+
