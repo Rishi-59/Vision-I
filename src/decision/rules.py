@@ -3,8 +3,8 @@ Decision engine for Vision I.
 
 Combines feature extraction, adaptive thresholds,
 scene context awareness, safety escalation,
-metrics, and logging to generate intelligent
-navigation guidance.
+short-term memory, metrics, and logging to generate
+intelligent navigation guidance.
 """
 
 import time
@@ -17,6 +17,7 @@ from src.utils.logger import DecisionLogger
 from src.utils.metrics import MetricsCollector
 from src.context.scene_context import SceneContext
 from src.safety.alert_manager import AlertManager
+from src.memory.short_term_memory import ShortTermMemory
 
 
 class DecisionEngine:
@@ -42,6 +43,7 @@ class DecisionEngine:
         # Phase 5
         self.context = SceneContext()
         self.alert_manager = AlertManager()
+        self.memory = ShortTermMemory()
 
     # --------------------------------------------------
 
@@ -109,21 +111,24 @@ class DecisionEngine:
                 best_decision = f"Warning. {label} approaching ahead."
                 best_context = {
                     "label": label,
+                    "bbox": bbox,
                     "distance": distance,
                     "direction": direction,
                     "motion": motion,
                 }
-                break
+                break  # CRITICAL always wins
 
             # HIGH: Obstacle close in center
             if (
-                distance is not None
+                best_decision is None
+                and distance is not None
                 and distance < center_threshold
                 and direction == "CENTER"
             ):
                 best_decision = "Obstacle ahead. Please stop."
                 best_context = {
                     "label": label,
+                    "bbox": bbox,
                     "distance": distance,
                     "direction": direction,
                     "motion": motion,
@@ -131,26 +136,30 @@ class DecisionEngine:
 
             # LOW: Side obstacles
             if (
-                direction == "LEFT"
+                best_decision is None
+                and direction == "LEFT"
                 and distance is not None
                 and distance < side_threshold
             ):
                 best_decision = "Obstacle on left. Move right."
                 best_context = {
                     "label": label,
+                    "bbox": bbox,
                     "distance": distance,
                     "direction": direction,
                     "motion": motion,
                 }
 
             elif (
-                direction == "RIGHT"
+                best_decision is None
+                and direction == "RIGHT"
                 and distance is not None
                 and distance < side_threshold
             ):
                 best_decision = "Obstacle on right. Move left."
                 best_context = {
                     "label": label,
+                    "bbox": bbox,
                     "distance": distance,
                     "direction": direction,
                     "motion": motion,
@@ -158,7 +167,18 @@ class DecisionEngine:
 
         # ---------- Final handling ----------
         if best_decision:
-            # Adaptive learning
+            # Determine severity first
+            severity = self.alert_manager.classify(best_decision)
+
+            # Suppress repeated alerts ONLY if not CRITICAL
+            if severity != 4:
+                if self.memory.is_recent(
+                    best_context.get("label"),
+                    best_context.get("bbox")
+                ):
+                    return None
+
+            # Adaptive learning (only for spoken alerts)
             self.adaptive.update(best_decision)
 
             # Metrics
@@ -173,9 +193,13 @@ class DecisionEngine:
                 decision=best_decision,
             )
 
-            # ---------- Phase 5.2: Safety Escalation ----------
-            severity = self.alert_manager.classify(best_decision)
+            # Update short-term memory
+            self.memory.update(
+                best_context.get("label"),
+                best_context.get("bbox")
+            )
 
+            # ---------- Phase 5.2: Safety Escalation ----------
             # Repeat faster for high severity
             if self.alert_manager.should_repeat(severity):
                 self.last_spoken_time = time.time() - self.cooldown_seconds
