@@ -1,108 +1,139 @@
-# AI-Based Intelligent Visual Guidance System for Visually Impaired Users
-
-## Phase 2 Technical Specification Document
+# AI-Based Intelligent Visual Guidance System for Visually Impaired Users  
+## Phase 2 – Technical Specification Document
 
 ---
 
 ## 1. Target User Profile
 
-The system is designed to assist visually impaired individuals in navigating indoor and outdoor environments safely by providing real-time voice guidance based on visual understanding of surroundings.
+The system is designed to assist visually impaired individuals in navigating both indoor and outdoor environments by providing real-time, voice-based navigation guidance derived from visual understanding of the surroundings.
+
+The target users may rely primarily on auditory feedback for situational awareness and require clear, timely, and actionable instructions rather than raw visual or object-level information.
 
 ---
 
 ## 2. Phase 2 Objectives
 
-The objective of Phase 2 is to upgrade the existing object detection system into an intelligent assistive system with the following capabilities:
+Phase 2 focuses on transforming a basic object detection pipeline into an **intelligent navigation assistance system** capable of interpreting visual information and generating meaningful guidance.
 
-- **Contextual Understanding**: Interpret the environment beyond simple object recognition
-- **Hazard Identification**: Detect and evaluate potential dangers in real-time
-- **Actionable Guidance**: Provide meaningful navigation instructions rather than raw object labels
+The key objectives of Phase 2 are:
+
+- **Contextual Interpretation**  
+  Move beyond object labels to understand spatial relationships and navigation relevance.
+
+- **Hazard Identification**  
+  Identify potential risks based on object position, distance, and motion.
+
+- **Actionable Guidance**  
+  Generate clear navigation instructions that assist safe movement rather than descriptive outputs.
 
 ---
 
 ## 3. Critical Navigation Scenarios
 
-Based on common navigation challenges faced by visually impaired users, the following situations have been identified as critical and achievable within the scope of this capstone project.
+Based on common challenges faced by visually impaired users, the following navigation scenarios were identified as critical, realistic, and achievable within the scope of a final-year capstone project.
 
 ### 3.1 Intelligence Specification Matrix
 
 | Situation Detected | Condition Evaluated | System Decision | Voice Guidance Output |
 |-------------------|---------------------|-----------------|----------------------|
-| Obstacle ahead | Object distance < 2 meters in center | Stop movement | "Obstacle ahead. Please stop." |
-| Clear path | No object in center region | Move forward | "Path is clear. Go straight." |
-| Obstacle on left | Object detected only on left | Avoid left side | "Obstacle on left. Move right." |
-| Obstacle on right | Object detected only on right | Avoid right side | "Obstacle on right. Move left." |
-| Moving vehicle | Object approaching with increasing speed | Danger alert | "Vehicle approaching. Stay back." |
-| Crowd detected | Multiple persons within close range | Slow movement | "Crowded area ahead. Move slowly." |
-| Narrow passage | Objects detected on both sides | Careful navigation | "Narrow path ahead. Proceed carefully." |
+| Obstacle ahead | Object detected in center region within safety distance | Stop movement | “Obstacle ahead. Please stop.” |
+| Clear path | No object detected in center region | Continue movement | “Path is clear. Go straight.” |
+| Obstacle on left | Object detected only in left region | Avoid left side | “Obstacle on left. Move right.” |
+| Obstacle on right | Object detected only in right region | Avoid right side | “Obstacle on right. Move left.” |
+| Approaching object | Object shows decreasing distance across frames | High-risk warning | “Warning. Object approaching ahead.” |
+| Crowd detected | Multiple persons detected within close proximity | Reduce speed | “Crowded area ahead. Move slowly.” |
+| Narrow passage | Obstacles detected on both sides | Careful navigation | “Narrow path ahead. Proceed carefully.” |
+
+These scenarios form the foundation for the system’s rule-based decision logic.
 
 ---
 
 ## 4. Visual Information Requirements
 
-To enable intelligent decision-making, the system extracts the following information from detected objects:
+To enable intelligent navigation decisions, the system extracts the following information from detected objects using monocular camera input:
 
-| Information | Purpose |
-|------------|---------|
-| Object type | Identify obstacle or vehicle |
-| Bounding box size | Estimate distance |
-| Object position | Determine left, center, right |
-| Frame-to-frame change | Detect motion |
+| Visual Information | Purpose |
+|-------------------|---------|
+| Object class label | Identify obstacle or entity type |
+| Bounding box size | Approximate object distance |
+| Bounding box position | Determine left, center, or right placement |
+| Frame-to-frame variation | Detect object motion or approach |
 
-**Note**: No additional sensors are required. All information is derived from monocular camera input.
+**Note:**  
+The system does not rely on additional sensors such as LiDAR or depth cameras. All spatial reasoning is derived from 2D visual input for simplicity and deployability.
 
 ---
 
 ## 5. System Intelligence Architecture
 
-The system employs a hybrid approach combining deep learning perception with rule-based reasoning:
+The system adopts a **hybrid intelligence architecture**, combining deep learning-based perception with rule-based reasoning.
 
-- **Perception Layer**: Pretrained object detection model
-- **Reasoning Layer**: Rule-based decision engine for guidance generation
+- **Perception Layer**  
+  A pretrained deep learning model performs object detection and localization.
+
+- **Reasoning Layer**  
+  A deterministic, rule-based decision engine evaluates extracted features to generate navigation guidance.
 
 ### 5.1 Design Rationale
 
-This approach ensures:
+This architectural choice ensures:
 
-- **Explainability**: Clear logic paths for decision-making
-- **Faster Development**: Leverages existing pretrained models
-- **Academic Suitability**: Appropriate complexity for evaluation and demonstration
+- **Explainability**  
+  Decision logic can be clearly explained and validated.
+
+- **Development Efficiency**  
+  Reduces the need for large custom datasets and extensive retraining.
+
+- **Academic Suitability**  
+  Balances practical implementation with theoretical understanding.
 
 ---
 
 ## 6. AI Integration Framework
 
-| Component | AI Role |
-|-----------|---------|
-| Object detection | Deep Learning (Pretrained CNN) |
-| Distance estimation | Mathematical approximation |
-| Motion detection | Temporal analysis |
-| Decision making | Rule-based AI |
-| Voice guidance | Natural language generation |
+| System Component | AI / Computational Role |
+|------------------|-------------------------|
+| Object detection | Deep learning (pretrained convolutional neural network) |
+| Distance estimation | Mathematical approximation using bounding box geometry |
+| Direction estimation | Spatial analysis relative to frame center |
+| Motion detection | Temporal comparison across frames |
+| Decision making | Rule-based artificial intelligence |
+| Voice guidance | Natural language instruction generation |
 
 ---
 
 ## 7. Expected Phase 2 Deliverables
 
-Upon successful implementation of Phase 2, the system will demonstrate the following capabilities:
+Upon completion of Phase 2, the system is expected to:
 
-- Understand spatial context of the environment
-- Predict potential dangers based on object behavior
-- Guide users using meaningful, context-aware voice instructions
-- Function in real-time using a single camera input
+- Interpret spatial context of detected objects
+- Identify navigation-relevant hazards
+- Generate meaningful and actionable voice instructions
+- Operate in real time using a single camera
+- Demonstrate explainable decision-making behavior
+
+These deliverables establish a strong foundation for subsequent phases involving adaptation, safety escalation, and personalization.
 
 ---
 
 ## 8. Capstone Project Justification
 
-This project is suitable for a final-year capstone because it:
+Phase 2 significantly strengthens the project’s suitability as a final-year capstone by demonstrating:
 
-- **Technical Depth**: Applies AI and computer vision concepts in a practical implementation
-- **System Integration**: Combines multiple components into a cohesive solution
-- **Social Impact**: Addresses a real-world assistive technology challenge
-- **Academic Rigor**: Demonstrates both engineering implementation and analytical thinking
+- **Technical Depth**  
+  Practical application of computer vision and AI concepts.
+
+- **System Integration**  
+  Coordination between perception, reasoning, and interaction layers.
+
+- **Social Impact**  
+  Direct relevance to assistive technology for visually impaired users.
+
+- **Academic Rigor**  
+  Clear problem formulation, structured logic, and evaluable outcomes.
 
 ---
 
-**Document Version**: 1.0  
-**Last Updated**: January 2026
+**Document Version**: 2.0  
+**Last Updated**: January 2026  
+**Project**: Vision I – AI-Based Intelligent Visual Guidance System
