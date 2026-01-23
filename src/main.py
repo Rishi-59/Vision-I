@@ -23,14 +23,14 @@ def main():
     frame_width = config.get("system", "frame_width", default=640)
     cooldown = config.get("system", "cooldown_seconds", default=3.0)
     confidence = config.get("detection", "confidence_threshold", default=0.5)
-    voice_enabled = config.get("modes", "voice_enabled", default=True)
+    mode = config.get("modes", "mode", default="voice")
 
     # Initialize system components
     camera = Camera()
-    detector = ObjectDetector(confidence_threshold=confidence)
+    detector = ObjectDetector(confidence_threshold=confidence) # type: ignore
     decision_engine = DecisionEngine(
-        frame_width=frame_width,
-        cooldown_seconds=cooldown
+        frame_width=frame_width, # type: ignore
+        cooldown_seconds=cooldown # type: ignore
     )
     voice = VoiceAssistant()
 
@@ -46,10 +46,16 @@ def main():
         decision = decision_engine.evaluate(detections)
 
         if decision:
-            if voice_enabled:
+            if mode == "voice":
                 voice.speak(decision)
-            else:
+
+            elif mode == "silent":
                 print(f"[DECISION] {decision}")
+
+            elif mode == "debug":
+                print(f"[DEBUG] Decision: {decision}")
+                print(f"[DEBUG] Detections: {detections}")
+
 
     camera.release()
     print("[INFO] Vision I system stopped.")
