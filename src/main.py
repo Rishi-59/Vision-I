@@ -10,8 +10,9 @@ from src.vision.detector import ObjectDetector
 from src.decision.rules import DecisionEngine
 from src.audio.tts import VoiceAssistant
 from src.utils.config_loader import Config
-import cv2 
+from src.scene.capture import SceneCapture
 
+import cv2
 
 def main():
     """
@@ -34,7 +35,8 @@ def main():
         cooldown_seconds=cooldown # type: ignore
     )
     voice = VoiceAssistant()
-
+    scene_capture = SceneCapture()
+    
     print("[INFO] Vision I system started.")
 
     print("=" * 50)
@@ -51,6 +53,13 @@ def main():
         frame = camera.get_frame()
         if frame is None:
             break
+
+        key = cv2.waitKey(1) & 0xFF
+        # Press 'd' to capture scene
+        if key == ord('d'):
+            path = scene_capture.capture(frame)
+            print(f"[INFO] Scene captured: {path}")
+
 
         # SHOW frame (required for key events)
         cv2.imshow("Vision I - Live Feed", frame)
