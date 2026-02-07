@@ -1,21 +1,34 @@
-import os
+"""
+Scene capture utilities for on-demand scene descriptions.
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import Optional
+
 import cv2
-from datetime import datetime
 
 
-class SceneCapture:
-    def __init__(self, cache_dir="cache"):
-        self.cache_dir = cache_dir
-        os.makedirs(self.cache_dir, exist_ok=True)
+@dataclass
+class SceneCapture: # type: ignore
+    cache_dir: Path
 
-    def capture(self, frame) -> str:
-        """
-        Capture a frame and save it to cache.
-        Returns the saved file path.
-        """
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = f"scene_{timestamp}.jpg"
-        path = os.path.join(self.cache_dir, filename)
+    def ensure_cache_dir(self) -> None:
+        self.cache_dir.mkdir(parents=True, exist_ok=True)
 
-        cv2.imwrite(path, frame)
-        return path
+    def capture(self, frame) -> Optional[Path]:
+        if frame is None:
+            return None
+
+        self.ensure_cache_dir()
+        timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S_%f")
+        image_path = self.cache_dir / f"scene_{timestamp}.jpg"
+
+        saved = cv2.imwrite(str(image_path), frame)
+        if not saved:
+            return None
+
+        return image_path

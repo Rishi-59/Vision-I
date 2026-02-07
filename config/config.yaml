@@ -14,3 +14,6 @@ thresholds:
 modes:
   mode: voice   # voice | silent | debug
 
+scene_description:
+  cooldown_seconds: 10.0
+  cache_dir: cache
