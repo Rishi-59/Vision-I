@@ -17,3 +17,11 @@ modes:
 scene_description:
   cooldown_seconds: 10.0
   cache_dir: cache
+  provider: gemini  # gemini | openai | stub
+  model: gemini-2.0-flash
+  temperature: 0.3
+  max_tokens: 160
+  debug: true
+  rate_limit:
+    min_interval_seconds: 5.0
+    max_per_minute: 6
