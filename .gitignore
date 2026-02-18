@@ -12,3 +12,9 @@ __pycache__/
 
 # Logs
 logs/
+
+# Scene capture cache
+cache/
+
+# Environment variables
+.env
